@@ -1,12 +1,15 @@
 import { Text, TextInput, View, TouchableOpacity } from 'react-native'
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState } from "react"
 import axios from "axios";
 import { useNavigation } from '@react-navigation/native';
+import * as Keychain from 'react-native-keychain';
+import { OrderContext } from '../../context/FetchData.js';
 
 
 const AdminLogin = () => {
     const navigation = useNavigation();
+    const { adminDeshboard_data } = useContext(OrderContext);
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("");
@@ -18,6 +21,9 @@ const AdminLogin = () => {
             const res = await axios.post("http://10.0.2.2:8080/api/admin/login", { email, password });
             console.log(res)
             if (res?.status === 201) {
+                await Keychain.setGenericPassword("admin", res.data.accessToken);
+                await adminDeshboard_data();
+
                 setErrorMsg("");
                 setEmail("");
                 setPassword("");

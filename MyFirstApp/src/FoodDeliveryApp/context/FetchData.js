@@ -15,7 +15,7 @@ export const OrderProvider = ({ children }) => {
       const token = credentials ? credentials.password : null;
 
       if (!token) {
-        console.log('Token not found');
+        console.log("token not found");
         return;
       }
 
@@ -39,7 +39,7 @@ export const OrderProvider = ({ children }) => {
       const token = credentials ? credentials.password : null;
 
       if (!token) {
-        console.log('Token not found');
+        console.log("token not found");
         return;
       }
 
@@ -68,6 +68,7 @@ export const OrderProvider = ({ children }) => {
         order,
         setOrder,
         getOrders,
+        adminDeshboard_data,
         users,
       }}
     >
