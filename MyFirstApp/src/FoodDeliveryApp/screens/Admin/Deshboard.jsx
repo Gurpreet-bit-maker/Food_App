@@ -46,8 +46,8 @@ export default function Deshboard() {
       <View className="mt-6">
         <Text className="text-2xl font-bold text-gray-900">Dashboard</Text>
 
-        <Text className="text-gray-500 mt-1">
-          Manage your application from here.
+        <Text className="mt-1 text-base text-gray-500">
+          Welcome back! Here's what's happening today.
         </Text>
       </View>
 
@@ -55,14 +55,24 @@ export default function Deshboard() {
       <View className="flex-row flex-wrap justify-between gap-y-4 mt-5">
         {/* Total Users */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">{users.totalUsers[0].totalUsers}</Text>
-          <Text className="mt-1 text-sm text-gray-500">Total Users</Text>
+          <Text className="text-3xl">👥</Text>
+          <Text className="mt-2 text-2xl font-bold text-gray-800">
+            {users.totalUsers[0].totalUsers}
+          </Text>
+          <Text className="mt-1 text-sm text-gray-500">
+            Total Users
+          </Text>
         </View>
 
         {/* Total Orders */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">{users.totalOrders[0].totalOrders}</Text>
-          <Text className="mt-1 text-sm text-gray-500">Total Orders</Text>
+          <Text className="text-3xl">📦</Text>
+          <Text className="mt-2 text-2xl font-bold text-gray-800">
+            {users.totalOrders[0].totalOrders}
+          </Text>
+          <Text className="mt-1 text-sm text-gray-500">
+            Total Orders
+          </Text>
         </View>
 
         {/* Pending Orders */}
@@ -74,9 +84,15 @@ export default function Deshboard() {
 
         {/* Revenue */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">{users.revanue}</Text>
-          <Text className="mt-1 text-sm text-gray-500">Revenue</Text>
+          <Text className="text-3xl">₹</Text>
+          <Text className="mt-2 text-2xl font-bold text-gray-800">
+            ₹{users.revanue}
+          </Text>
+          <Text className="mt-1 text-sm text-gray-500">
+            Revenue
+          </Text>
         </View>
+
       </View>
 
       {/* Admin Actions */}
