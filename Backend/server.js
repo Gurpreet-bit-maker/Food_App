@@ -169,22 +169,54 @@ app.post("/api/admin/login", async (req, res) => {
     if (user.role == "admin" && user.password == password) {
       return res.status(201).json({ message: "admin successfully login" });
     }
+    // ! admin token
+    const accessToken = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" },
+    );
 
-    return res.status(401).json({ message: "unauthorized admin" });
+    return res
+      .status(401)
+      .json({ message: "unauthorized admin", accessToken: accessToken });
   } catch (error) {
     console.log(error);
+  }
+});
+app.post("/api/admin/logout", authMiddleware, async (req, res) => {
+  try {
+    await User.deleteMany({
+      userId: req.user.userId,
+    });
+
+    return res.status(200).json({
+      message: "Logout successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Logout failed",
+    });
   }
 });
 //! deshboard
 app.get("/api/admin/deshboard", authMiddleware, async (req, res) => {
   try {
-    const [users, totalOrders] = await Promise.all([
-      User.aggregate([{ $match: { role: "user" } }, { $count: "totalUsers" }]),
+    const [users, totalOrders, revanue] = await Promise.all([
+      User.aggregate([
+        { $match: { role: "user" } },
+        { $count: "totalUsers" },
+      ]),
 
       Order.aggregate([{ $count: "totalOrders" }]),
+      Order.aggregate([
+        { $group: { _id: "$itemName", revanueRange: { $sum: "$totalPrice" } } },
+      ]),
     ]);
 
-    return res.json({ totalUsers: users, totalOrders: totalOrders });
+    return res.json({
+      totalUsers: users,
+      totalOrders: totalOrders,
+    });
   } catch (error) {
     console.log(error);
   }
