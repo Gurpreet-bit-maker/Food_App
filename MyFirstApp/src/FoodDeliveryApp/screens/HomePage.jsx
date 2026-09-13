@@ -34,7 +34,11 @@ const HomePage = () => {
 
     const logout = async () => {
         try {
-            const token = await SecureStore.getItemAsync("accessToken");
+            const credentials = await Keychain.getGenericPassword();
+
+            const token = credentials
+                ? credentials.password
+                : null;
 
             await axios.post(
                 "http://10.0.2.2:8080/api/user/logout",
@@ -45,10 +49,13 @@ const HomePage = () => {
                     },
                 }
             );
+
+            await Keychain.resetGenericPassword();
+
+            navigation.replace("Login");
+
         } catch (error) {
-            console.log(error);
-        } finally {
-            await SecureStore.deleteItemAsync("accessToken");
+            console.log(error.response?.data);
         }
     };
 

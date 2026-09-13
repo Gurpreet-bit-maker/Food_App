@@ -4,17 +4,26 @@ import { useNavigation } from "@react-navigation/native"
 import LinearGradient from "react-native-linear-gradient";
 import img1 from "../../../assets/FoodDelivery/image 1.png"
 import img2 from "../../../assets/FoodDelivery/image 2.png"
+import * as Keychain from "react-native-keychain";
+
+
+
 const SplashScreen = () => {
     const navigation = useNavigation();
 
     useEffect(() => {
-        const move = setTimeout(() => {
-            // navigation.replace("Tabs");
-            // navigation.replace("AdminDeshboard");
-            // navigation.replace("Signup");
-            navigation.replace("Login");
-        }, 2000)
-        return () => clearTimeout(move)
+        const move = setTimeout(async () => {
+            const credentials = await Keychain.getGenericPassword();
+
+            if (credentials) {
+                navigation.replace("Tabs");
+            } else {
+                navigation.replace("Login");
+            }
+
+        }, 2000);
+
+        return () => clearTimeout(move);
     }, [])
 
     return (

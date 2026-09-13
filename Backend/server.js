@@ -3,6 +3,7 @@ import connectDB from "./config/connection.js";
 import Order from "./models/orderSchema.js";
 import User from "./models/userSchema.js";
 import jwt from "jsonwebtoken";
+
 // middleware
 import authMiddleware from "./middleware/tokenMiddleware.js";
 
@@ -15,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 // auth
 app.post("/api/user/logout", authMiddleware, async (req, res) => {
   try {
-    await RefreshToken.deleteMany({
+    await User.deleteMany({
       userId: req.user.userId,
     });
 
@@ -137,7 +138,7 @@ app.post("/api/user/buy-order", authMiddleware, async (req, res) => {
 
 app.get("/api/get-orders", authMiddleware, async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find({ user: req.user.userId });
 
     res.status(200).json({
       success: true,

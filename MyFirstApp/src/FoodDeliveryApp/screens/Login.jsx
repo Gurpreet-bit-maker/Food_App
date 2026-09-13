@@ -42,7 +42,7 @@ export default function Login() {
                 setErrorMsg("user not found");
             }
 
-            console.log(error);
+            console.log(error.message);
 
         } finally {
             setLoading(false);
