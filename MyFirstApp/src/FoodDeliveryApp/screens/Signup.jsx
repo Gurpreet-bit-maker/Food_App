@@ -20,7 +20,8 @@ const Signup = () => {
             const res = await axios.post("http://10.0.2.2:8080/api/user/singup", { fullName, email, password });
             console.log(res);
             if (res?.data) {
-                navigation.navigate("Tabs")
+                // navigation.navigate("Tabs");
+                navigation.navigate("AdminDeshboard");
             }
         } catch (error) {
             console.log(error.message);

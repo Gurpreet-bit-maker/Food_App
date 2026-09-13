@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { use, useContext } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import axios from "axios"
+import { OrderContext } from "../../context/FetchData.js"
 
 export default function Deshboard() {
   const navigation = useNavigation();
-  
+  const { users } = useContext(OrderContext);
+
   const logout = async () => {
     try {
       const res = await axios.get("http://10.0.2.2:8080/api/user/logout");
@@ -16,8 +18,10 @@ export default function Deshboard() {
       console.log(error)
     }
   }
+  console.log(users.totalUsers)
   return (
     <View className="flex-1 bg-gray-100 px-5 pt-12">
+
 
       {/* Header */}
       <View className="bg-white rounded-2xl px-5 py-4 flex-row items-center justify-between shadow-sm">
@@ -49,6 +53,33 @@ export default function Deshboard() {
         <Text className="text-gray-500 mt-1">
           Manage your application from here.
         </Text>
+      </View>
+
+      {/* card top  */}
+      <View className="flex-row flex-wrap justify-between gap-y-4">
+        {/* Card 1 */}
+        <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
+          <Text className="text-2xl font-bold text-gray-800">{users.totalUsers[0].totalUsers}</Text>
+          <Text className="mt-1 text-sm text-gray-500">Total Users</Text>
+        </View>
+
+        {/* Card 2 */}
+        <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
+          <Text className="text-2xl font-bold text-gray-800">{users.totalOrders[0].totalOrders}</Text>
+          <Text className="mt-1 text-sm text-gray-500">Total Orders</Text>
+        </View>
+
+        {/* Card 3 */}
+        <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
+          <Text className="text-2xl font-bold text-gray-800">3</Text>
+          <Text className="mt-1 text-sm text-gray-500">Pending Orders</Text>
+        </View>
+
+        {/* Card 4 */}
+        <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
+          <Text className="text-2xl font-bold text-gray-800">4</Text>
+          <Text className="mt-1 text-sm text-gray-500">Revenue</Text>
+        </View>
       </View>
 
     </View>

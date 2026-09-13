@@ -5,94 +5,109 @@ import {
     TouchableOpacity,
     Modal,
     Image
-} from 'react-native'
+} from "react-native";
 
-
-
-import img from "../../../assets/FoodDelivery/pngwing 12.png"
-import Slider from '@react-native-community/slider';
-import { useState, useReducer, useEffect, useContext } from 'react';
+import img from "../../../assets/FoodDelivery/pngwing 12.png";
+import Slider from "@react-native-community/slider";
+import { useState, useReducer, useEffect, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { toppings, sideOptions } from "../../data.js"
-import Toppings from "../components/Toppings/Toppings.jsx"
-import axios from "axios"
-import { OrderContext } from "../context/FetchData.js"
+import { toppings, sideOptions } from "../../data.js";
+import Toppings from "../components/Toppings/Toppings.jsx";
+import axios from "axios";
+import { OrderContext } from "../context/FetchData.js";
+import * as Keychain from "react-native-keychain";
 
 const Customize = ({ route }) => {
     const { getOrders } = useContext(OrderContext);
-    const { name, price } = route.params.orderDetails.params.food
+
+    const { name, price } = route.params.orderDetails.params.food;
 
     const navigation = useNavigation();
+
     const [spicy, setSpicy] = useState(70);
+
     const [finalOrder, setFinalOrder] = useState({
         toppings: [],
         toppingsPrice: 0,
-        totalToppings: 0
+        totalToppings: 0,
     });
+
     const [orderPlaced, setOrderPlaced] = useState(false);
 
-    // reducer
     function reducer(state, action) {
         switch (action.type) {
-
             case "inc":
                 return {
-                    qty: state.qty + 1
+                    qty: state.qty + 1,
                 };
 
             case "dec":
                 return {
-                    qty: state.qty > 0
-                        ? state.qty - 1
-                        : 0
+                    qty: state.qty > 0 ? state.qty - 1 : 0,
                 };
 
             default:
-                throw Error('Unknown action: ' + action.type);
+                throw Error("Unknown action: " + action.type);
         }
     }
-    const [state, dispatch] = useReducer(reducer, { qty: route.params.quentity });
 
+    const [state, dispatch] = useReducer(reducer, {
+        qty: route.params.quentity,
+    });
 
     const clickMe = async () => {
-        setFinalOrder(prev => ({
-            ...prev,
+        const orderData = {
+            ...finalOrder,
             itemName: name,
             itemPrice: price * state.qty,
             quantity: state.qty,
             spicy: spicy,
-            totalPrice: (price * state.qty) + prev.toppingsPrice
-        }));
+            totalPrice: price * state.qty + finalOrder.toppingsPrice,
+        };
 
-        setOrderPlaced(true);
+        try {
+            const credentials = await Keychain.getGenericPassword();
 
-    };
+            const token = credentials
+                ? credentials.password
+                : null;
 
-    useEffect(() => {
-        console.log("Order:", finalOrder);
-        const sendApi = async () => {
-            try {
-                if (orderPlaced == true) {
-                    const response = await axios.post(
-                        "http://10.0.2.2:8080/api/user/buy-order",
-                        finalOrder
-                    );
-                    await getOrders()
-                    console.log("Order Created:", response);
-                }
-            } catch (error) {
-                console.log(error)
+            if (!token) {
+                console.log("Token not found");
+                return;
             }
+
+            const response = await axios.post(
+                "http://10.0.2.2:8080/api/user/buy-order",
+                orderData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            console.log("Order Created:", response.data);
+
+            setFinalOrder(orderData);
+
+            await getOrders();
+
+            setOrderPlaced(true);
+
+        } catch (error) {
+            console.log(
+                "Order Error:",
+                error.response?.data || error.message
+            );
         }
-        sendApi()
-    }, [orderPlaced]);
+    };
 
     const liveTotalPrice =
         price * state.qty + finalOrder.toppingsPrice;
 
     return (
-
-        <View className="flex-1">
+        < View className="flex-1" >
 
             <View className="flex-row justify-between items-center px-6 pt-10">
                 <TouchableOpacity
@@ -291,11 +306,13 @@ const Customize = ({ route }) => {
                     </View>
                 </Modal>
             </View>
-        </View>
+        </View >
+    );
+};
 
-    )
-}
+export default Customize;
 
-export default Customize
+const styles = StyleSheet.create({});
 
-const styles = StyleSheet.create({})
+
+// data

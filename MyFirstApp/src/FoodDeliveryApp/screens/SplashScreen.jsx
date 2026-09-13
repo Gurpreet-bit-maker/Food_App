@@ -9,6 +9,9 @@ const SplashScreen = () => {
 
     useEffect(() => {
         const move = setTimeout(() => {
+            // navigation.replace("Tabs");
+            // navigation.replace("AdminDeshboard");
+            // navigation.replace("Signup");
             navigation.replace("Login");
         }, 2000)
         return () => clearTimeout(move)

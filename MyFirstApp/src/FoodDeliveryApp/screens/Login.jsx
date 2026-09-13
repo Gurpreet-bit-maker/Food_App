@@ -4,11 +4,12 @@ import { useState } from "react"
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { LoaderCircle } from "lucide-react-native";
+import * as Keychain from "react-native-keychain";
 
 
 export default function Login() {
     const navigation = useNavigation();
-    
+
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -24,6 +25,10 @@ export default function Login() {
             );
 
             if (res?.status === 201) {
+                const { accessToken } = res.data;
+
+                await Keychain.setGenericPassword("user", accessToken);
+
                 setErrorMsg("");
                 setEmail("");
                 setPassword("");

@@ -2,6 +2,9 @@ import express from "express";
 import connectDB from "./config/connection.js";
 import Order from "./models/orderSchema.js";
 import User from "./models/userSchema.js";
+import jwt from "jsonwebtoken";
+// middleware
+import authMiddleware from "./middleware/tokenMiddleware.js";
 
 const app = express();
 await connectDB();
@@ -10,14 +13,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // auth
-app.get("/api/user/logout", async (req, res) => {
+app.post("/api/user/logout", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findOne({});
-    return res.status(200).json({ message: "logout successfully" });
+    await RefreshToken.deleteMany({
+      userId: req.user.userId,
+    });
+
+    return res.status(200).json({
+      message: "Logout successfully",
+    });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      message: "Logout failed",
+    });
   }
 });
+
+//! token jwt create
 app.post("/api/user/login", async (req, res) => {
   try {
     const { password, email } = req.body;
@@ -27,9 +39,21 @@ app.post("/api/user/login", async (req, res) => {
     const user = await User.findOne({ email, password });
     if (!user) return res.status(401).json({ message: "user not found" });
     console.log(user);
-    return res.status(201).json({ message: "login successfully" });
+
+    const accessToken = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" },
+    );
+    return res.status(201).json({
+      message: "login successfully",
+      accessToken,
+    });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Server error",
+    });
   }
 });
 app.post("/api/user/singup", async (req, res) => {
@@ -44,10 +68,18 @@ app.post("/api/user/singup", async (req, res) => {
 
 // orders
 // POST - Create New Order
-app.post("/api/user/buy-order", async (req, res) => {
+app.post("/api/user/buy-order", authMiddleware, async (req, res) => {
   try {
     console.log(req.body);
+    // const user = await User.findOne()
     const newOrder = await Order.create(req.body);
+
+    // const orders = await Order.findOne({})
+    // setTimeout( async() => {
+
+    // }, 5000);
+
+    //  Order.orderStatus  = "se"
 
     return res.status(201).json({
       success: true,
@@ -65,7 +97,7 @@ app.post("/api/user/buy-order", async (req, res) => {
   }
 });
 
-app.get("/api/get-orders", async (req, res) => {
+app.get("/api/get-orders", authMiddleware, async (req, res) => {
   try {
     const orders = await Order.find();
 
@@ -100,6 +132,20 @@ app.post("/api/admin/login", async (req, res) => {
     }
 
     return res.status(401).json({ message: "unauthorized admin" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+//! deshboard
+app.get("/api/admin/deshboard", authMiddleware, async (req, res) => {
+  try {
+    const [users, totalOrders] = await Promise.all([
+      User.aggregate([{ $match: { role: "user" } }, { $count: "totalUsers" }]),
+
+      Order.aggregate([{ $count: "totalOrders" }]),
+    ]);
+
+    return res.json({ totalUsers: users, totalOrders: totalOrders });
   } catch (error) {
     console.log(error);
   }

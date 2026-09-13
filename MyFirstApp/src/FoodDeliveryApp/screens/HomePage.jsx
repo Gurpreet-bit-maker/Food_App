@@ -5,6 +5,7 @@ import FilteredDataPage from "../components/Home/FilteredDataPage"
 import { foodData } from "../../data.js"
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native'
+import * as Keychain from "react-native-keychain";
 
 const HomePage = () => {
     const navigation = useNavigation();
@@ -33,14 +34,23 @@ const HomePage = () => {
 
     const logout = async () => {
         try {
-            const res = await axios.get("http://10.0.2.2:8080/api/user/logout");
-            if (res.status == 200) {
-                navigation.navigate("Login")
-            }
+            const token = await SecureStore.getItemAsync("accessToken");
+
+            await axios.post(
+                "http://10.0.2.2:8080/api/user/logout",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
         } catch (error) {
-            console.log(error)
+            console.log(error);
+        } finally {
+            await SecureStore.deleteItemAsync("accessToken");
         }
-    }
+    };
 
     return (
         <View className='p-5 gap-y-10'>

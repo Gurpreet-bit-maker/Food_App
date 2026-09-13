@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     itemName: {
       type: String,
       required: true,
@@ -43,6 +47,11 @@ const orderSchema = new mongoose.Schema(
     totalPrice: {
       type: Number,
       required: true,
+    },
+    orderStatus: {
+      type: String,
+      enum: ["pending", "completed"],
+      default: "pending",
     },
   },
   {
