@@ -70,21 +70,34 @@ app.post("/api/user/singup", async (req, res) => {
 // POST - Create New Order
 app.post("/api/user/buy-order", authMiddleware, async (req, res) => {
   try {
-    console.log(req.body);
-    // const user = await User.findOne()
-    const newOrder = await Order.create(req.body);
+    const {
+      itemName,
+      itemPrice,
+      quantity,
+      spicy,
+      toppings,
+      toppingsPrice,
+      totalToppings,
+      totalPrice,
+    } = req.body;
 
-    // const orders = await Order.findOne({})
-    // setTimeout( async() => {
+    const order = await Order.create({
+      user: req.user.userId,
 
-    // }, 5000);
-
-    //  Order.orderStatus  = "se"
+      itemName,
+      itemPrice,
+      quantity,
+      spicy,
+      toppings,
+      toppingsPrice,
+      totalToppings,
+      totalPrice,
+    });
 
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
-      order: newOrder,
+      order: order,
     });
   } catch (error) {
     console.log(error);
