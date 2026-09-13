@@ -21,7 +21,7 @@ const AdminLogin = () => {
             const res = await axios.post("http://10.0.2.2:8080/api/admin/login", { email, password });
             console.log(res)
             if (res?.status === 201) {
-                await Keychain.setGenericPassword("admin", res.data.accessToken);
+                
                 await adminDeshboard_data();
 
                 setErrorMsg("");

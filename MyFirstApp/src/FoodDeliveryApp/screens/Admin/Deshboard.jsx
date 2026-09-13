@@ -4,24 +4,26 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { OrderContext } from '../../context/FetchData.js';
 
+
+
 export default function Deshboard() {
   const navigation = useNavigation();
   const { users } = useContext(OrderContext);
 
   const logout = async () => {
     try {
-      const res = await axios.get('http://10.0.2.2:8080/api/user/logout');
+      const res = await axios.post(
+        "http://10.0.2.2:8080/api/admin/logout");
 
-      if (res.status == 200) {
-        navigation.navigate('AdminLogin');
+      if (res.status === 200) {
+        navigation.replace("AdminLogin");
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.response?.data || error.message);
     }
   };
 
-  console.log(users.totalUsers);
-
+  console.log(users)
   return (
     <View className="flex-1 bg-gray-100 px-5 pt-12">
       {/* Header */}
@@ -53,29 +55,26 @@ export default function Deshboard() {
       <View className="flex-row flex-wrap justify-between gap-y-4 mt-5">
         {/* Total Users */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">12</Text>
-
+          <Text className="text-2xl font-bold text-gray-800">{users.totalUsers[0].totalUsers}</Text>
           <Text className="mt-1 text-sm text-gray-500">Total Users</Text>
         </View>
 
         {/* Total Orders */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">8</Text>
-
+          <Text className="text-2xl font-bold text-gray-800">{users.totalOrders[0].totalOrders}</Text>
           <Text className="mt-1 text-sm text-gray-500">Total Orders</Text>
         </View>
 
         {/* Pending Orders */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">3</Text>
+          <Text className="text-2xl font-bold text-gray-800">{users.totalOrders[0].totalOrders}</Text>
 
           <Text className="mt-1 text-sm text-gray-500">Pending Orders</Text>
         </View>
 
         {/* Revenue */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">₹4,999</Text>
-
+          <Text className="text-2xl font-bold text-gray-800">{users.revanue}</Text>
           <Text className="mt-1 text-sm text-gray-500">Revenue</Text>
         </View>
       </View>
@@ -86,7 +85,7 @@ export default function Deshboard() {
 
         {/* Orders Button */}
         <TouchableOpacity
-          onPress={() => navigation.navigate('Orders')}
+          onPress={() => navigation.navigate('Order')}
           className="bg-[#403635] rounded-2xl p-5 flex-row items-center justify-between"
         >
           <View>

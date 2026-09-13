@@ -10,22 +10,9 @@ export const OrderProvider = ({ children }) => {
 
   const getOrders = async () => {
     try {
-      const credentials = await Keychain.getGenericPassword();
-
-      const token = credentials ? credentials.password : null;
-
-      if (!token) {
-        console.log("token not found");
-        return;
-      }
-
-      const response = await axios.get('http://10.0.2.2:8080/api/get-orders', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setOrder(response.data.orders);
+      const response = await axios.get('http://10.0.2.2:8080/api/get-orders');
+      setOrder(response?.data?.orders);
+      
     } catch (error) {
       console.log('Get Orders Error:', error.response?.data || error.message);
     }
@@ -34,21 +21,7 @@ export const OrderProvider = ({ children }) => {
   //* Admin Dashboard
   const adminDeshboard_data = async () => {
     try {
-      const credentials = await Keychain.getGenericPassword();
-
-      const token = credentials ? credentials.password : null;
-
-      if (!token) {
-        console.log("token not found");
-        return;
-      }
-
-      const res = await axios.get('http://10.0.2.2:8080/api/admin/deshboard', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const res = await axios.get('http://10.0.2.2:8080/api/admin/deshboard');
       setUsers(res.data);
 
       console.log('Dashboard Data:', res.data);

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { LoaderCircle } from "lucide-react-native";
-import * as Keychain from "react-native-keychain";
+
 
 
 export default function Login() {
@@ -24,11 +24,7 @@ export default function Login() {
                 { email, password }
             );
 
-            if (res?.status === 201) {
-                const { accessToken } = res.data;
-
-                await Keychain.setGenericPassword("user", accessToken);
-
+            if (res?.status === 200) {
                 setErrorMsg("");
                 setEmail("");
                 setPassword("");
@@ -42,7 +38,7 @@ export default function Login() {
                 setErrorMsg("user not found");
             }
 
-            console.log(error.message);
+            console.log(error.response);
 
         } finally {
             setLoading(false);
@@ -112,17 +108,7 @@ export default function Login() {
 
                 </TouchableOpacity>
 
-                <View className="flex-row justify-center mt-6">
-                    <Text className="text-gray-500">
-                        Don't have an account?
-                    </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("Signup")} >
-
-                        <Text className="text-red-500 font-bold ml-1">
-                            Sign Up
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                
                 {/* admin */}
                 <TouchableOpacity
                     onPress={() => navigation.navigate("AdminLogin")}
