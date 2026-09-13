@@ -36,7 +36,7 @@ export default function Orders() {
 
       <FlatList
         data={order}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
         renderItem={({ item }) => (
           <View className="bg-white rounded-2xl p-5 mb-4 shadow">
             <View className="flex-row justify-between">
