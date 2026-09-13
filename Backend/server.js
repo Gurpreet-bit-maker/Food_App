@@ -56,6 +56,7 @@ app.post("/api/user/login", async (req, res) => {
     });
   }
 });
+
 app.post("/api/user/singup", async (req, res) => {
   try {
     const { fullName, email, password } = req.body;

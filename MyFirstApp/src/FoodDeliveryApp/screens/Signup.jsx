@@ -13,7 +13,7 @@ const Signup = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-
+    console.log(fullName)
 
 
     const signupData = async () => {
@@ -27,19 +27,18 @@ const Signup = () => {
                 }
             );
 
+            console.log(res)
+
             if (res?.status === 201) {
                 const { accessToken } = res.data;
 
-                // Token save
                 await Keychain.setGenericPassword("user", accessToken);
 
-                // Form clear
                 setFullName("");
                 setEmail("");
                 setPassword("");
 
-                // Login state
-                setIsLoggedIn(true);
+                navigation.navigate("Tabs");
             }
         } catch (error) {
             console.log(
