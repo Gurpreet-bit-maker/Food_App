@@ -58,11 +58,35 @@ app.post("/api/user/login", async (req, res) => {
 });
 app.post("/api/user/singup", async (req, res) => {
   try {
-    const user = await User.create(req.body);
-    console.log(user);
-    return res.json(user);
+    const { fullName, email, password } = req.body;
+
+    const user = await User.create({
+      fullName,
+      email,
+      password,
+    });
+
+    const accessToken = jwt.sign(
+      {
+        userId: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "15m",
+      },
+    );
+
+    return res.status(201).json({
+      message: "Signup successfully",
+      accessToken,
+    });
   } catch (error) {
-    return res.status(500).json({ message: "server error" });
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Signup failed",
+    });
   }
 });
 

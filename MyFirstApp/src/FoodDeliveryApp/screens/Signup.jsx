@@ -3,6 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios';
+import * as Keychain from "react-native-keychain";
 
 const Signup = () => {
     const navigation = useNavigation();
@@ -17,16 +18,36 @@ const Signup = () => {
 
     const signupData = async () => {
         try {
-            const res = await axios.post("http://10.0.2.2:8080/api/user/singup", { fullName, email, password });
-            console.log(res);
-            if (res?.data) {
-                // navigation.navigate("Tabs");
-                navigation.navigate("AdminDeshboard");
+            const res = await axios.post(
+                "http://10.0.2.2:8080/api/user/singup",
+                {
+                    fullName,
+                    email,
+                    password,
+                }
+            );
+
+            if (res?.status === 201) {
+                const { accessToken } = res.data;
+
+                // Token save
+                await Keychain.setGenericPassword("user", accessToken);
+
+                // Form clear
+                setFullName("");
+                setEmail("");
+                setPassword("");
+
+                // Login state
+                setIsLoggedIn(true);
             }
         } catch (error) {
-            console.log(error.message);
+            console.log(
+                "Signup Error:",
+                error.response?.data || error.message
+            );
         }
-    }
+    };
 
     return (
         <View className="flex-1 bg-white px-6 justify-center">
