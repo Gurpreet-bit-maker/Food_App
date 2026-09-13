@@ -14,12 +14,14 @@ const SplashScreen = () => {
     useEffect(() => {
         const move = setTimeout(async () => {
             const credentials = await Keychain.getGenericPassword();
+            navigation.replace("AdminDeshboard");
+            // navigation.replace("Tabs");
 
-            if (credentials) {
-                navigation.replace("Tabs");
-            } else {
-                navigation.replace("Login");
-            }
+            // if (credentials) {
+            //     navigation.replace("Tabs");
+            // } else {
+            //     navigation.replace("Login");
+            // }
 
         }, 2000);
 

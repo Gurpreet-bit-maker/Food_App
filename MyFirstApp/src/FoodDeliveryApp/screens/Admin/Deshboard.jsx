@@ -10,15 +10,31 @@ export default function Deshboard() {
 
   const logout = async () => {
     try {
-      const res = await axios.get("http://10.0.2.2:8080/api/user/logout");
-      if (res.status == 200) {
-        navigation.navigate("AdminLogin")
-      }
+      const credentials = await Keychain.getGenericPassword();
+
+      const token = credentials
+        ? credentials.password
+        : null;
+
+      await axios.post(
+        "http://10.0.2.2:8080/api/admin/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      await Keychain.resetGenericPassword();
+
+      navigation.replace("AdminLogin");
+
     } catch (error) {
-      console.log(error)
+      console.log(error.response?.data);
     }
-  }
-  console.log(users.totalUsers)
+  };
+  // console.log(users)
   return (
     <View className="flex-1 bg-gray-100 px-5 pt-12">
 
@@ -59,13 +75,13 @@ export default function Deshboard() {
       <View className="flex-row flex-wrap justify-between gap-y-4">
         {/* Card 1 */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">{users.totalUsers[0].totalUsers}</Text>
+          {/* <Text className="text-2xl font-bold text-gray-800">{users.totalUsers[0].totalUsers}</Text> */}
           <Text className="mt-1 text-sm text-gray-500">Total Users</Text>
         </View>
 
         {/* Card 2 */}
         <View className="w-[48%] rounded-2xl bg-white p-4 shadow">
-          <Text className="text-2xl font-bold text-gray-800">{users.totalOrders[0].totalOrders}</Text>
+          {/* <Text className="text-2xl font-bold text-gray-800">{users.totalOrders[0].totalOrders}</Text> */}
           <Text className="mt-1 text-sm text-gray-500">Total Orders</Text>
         </View>
 
